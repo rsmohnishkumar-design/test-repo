@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhysicsLab — Interactive Physics Simulators</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <h1><span class="logo">⚡</span> PhysicsLab</h1>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="circuit">Circuit Builder</button>
+    <button class="tab-btn" data-tab="projectile">Projectile Motion</button>
+    <button class="tab-btn" data-tab="pendulum">Pendulum Lab</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== CIRCUIT BUILDER ===================== -->
+  <section id="circuit" class="panel active">
+    <div class="lab-layout">
+      <div class="toolbar" id="circuit-toolbar">
+        <button class="tool-btn active" data-tool="wire">🔌 Wire</button>
+        <button class="tool-btn" data-tool="resistor">🟧 Resistor</button>
+        <button class="tool-btn" data-tool="battery">🔋 Battery</button>
+        <button class="tool-btn" data-tool="bulb">💡 Bulb</button>
+        <button class="tool-btn" data-tool="switch">🔀 Switch</button>
+        <button class="tool-btn" data-tool="select">🖱️ Select / Toggle</button>
+        <button class="tool-btn danger" data-tool="delete">🗑️ Erase</button>
+        <span class="spacer"></span>
+        <button id="circuit-example" class="tool-btn">✨ Load Example</button>
+        <button id="circuit-clear" class="tool-btn danger">Clear All</button>
+      </div>
+      <div class="lab-main">
+        <canvas id="circuit-canvas" width="760" height="460"></canvas>
+        <p class="hint">Pick a tool, then <b>click a grid dot and drag</b> to any other dot to place a part.
+        With <b>Select</b>, click a resistor/battery to edit its value, or click a switch to flip it.</p>
+      </div>
+      <aside class="side-panel">
+        <h3>Inspector</h3>
+        <div id="circuit-props" class="props-box">Click a component with the Select tool to edit it.</div>
+        <h3>Readouts</h3>
+        <div id="circuit-readouts" class="readouts-box"></div>
+        <h3>How it works</h3>
+        <div class="theory-box">
+          <p>This isn't a cartoon — it's a real solver. Every wire, resistor, bulb and battery becomes an edge in a
+          circuit graph, and PhysicsLab solves <b>Kirchhoff's Current &amp; Voltage Laws</b> simultaneously
+          (Modified Nodal Analysis) to find the exact voltage at every node and current through every part.</p>
+          <p>Moving dots show real current — direction and speed reflect the solved values. Bulbs glow brighter
+          with more power (P = I²R).</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== PROJECTILE MOTION ===================== -->
+  <section id="projectile" class="panel">
+    <div class="lab-layout">
+      <div class="controls" id="projectile-controls">
+        <label>Launch speed: <span id="proj-speed-val">25</span> m/s
+          <input id="proj-speed" type="range" min="1" max="60" step="1" value="25">
+        </label>
+        <label>Launch angle: <span id="proj-angle-val">45</span>°
+          <input id="proj-angle" type="range" min="0" max="90" step="1" value="45">
+        </label>
+        <label>Launch height: <span id="proj-height-val">0</span> m
+          <input id="proj-height" type="range" min="0" max="50" step="1" value="0">
+        </label>
+        <label>Gravity:
+          <select id="proj-gravity">
+            <option value="9.81" selected>Earth (9.81 m/s²)</option>
+            <option value="1.62">Moon (1.62 m/s²)</option>
+            <option value="3.71">Mars (3.71 m/s²)</option>
+            <option value="24.79">Jupiter (24.79 m/s²)</option>
+          </select>
+        </label>
+        <div class="btn-row">
+          <button id="proj-launch" class="primary-btn">🚀 Launch</button>
+          <button id="proj-reset" class="tool-btn">Reset</button>
+        </div>
+      </div>
+      <div class="lab-main">
+        <canvas id="proj-canvas" width="760" height="420"></canvas>
+      </div>
+      <aside class="side-panel">
+        <h3>Live Data</h3>
+        <div id="proj-live" class="readouts-box"></div>
+        <h3>Analytic Results</h3>
+        <div id="proj-results" class="readouts-box"></div>
+        <h3>Formulas</h3>
+        <div class="theory-box">
+          <p>x(t) = v₀cos(θ)·t</p>
+          <p>y(t) = y₀ + v₀sin(θ)·t − ½gt²</p>
+          <p>Range, max height &amp; flight time are solved analytically and shown once you launch.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== PENDULUM LAB ===================== -->
+  <section id="pendulum" class="panel">
+    <div class="lab-layout">
+      <div class="controls" id="pendulum-controls">
+        <label>Length: <span id="pend-length-val">1.5</span> m
+          <input id="pend-length" type="range" min="0.2" max="3" step="0.1" value="1.5">
+        </label>
+        <label>Initial angle: <span id="pend-angle-val">30</span>°
+          <input id="pend-angle" type="range" min="1" max="170" step="1" value="30">
+        </label>
+        <label>Gravity:
+          <select id="pend-gravity">
+            <option value="9.81" selected>Earth (9.81 m/s²)</option>
+            <option value="1.62">Moon (1.62 m/s²)</option>
+            <option value="3.71">Mars (3.71 m/s²)</option>
+          </select>
+        </label>
+        <label>Damping: <span id="pend-damping-val">0.02</span>
+          <input id="pend-damping" type="range" min="0" max="0.5" step="0.01" value="0.02">
+        </label>
+        <div class="btn-row">
+          <button id="pend-start" class="primary-btn">▶ Start</button>
+          <button id="pend-pause" class="tool-btn">⏸ Pause</button>
+          <button id="pend-reset" class="tool-btn">Reset</button>
+        </div>
+      </div>
+      <div class="lab-main">
+        <canvas id="pend-canvas" width="760" height="420"></canvas>
+      </div>
+      <aside class="side-panel">
+        <h3>Live Data</h3>
+        <div id="pend-live" class="readouts-box"></div>
+        <h3>Theory</h3>
+        <div id="pend-theory" class="theory-box"></div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">Built for learning: Circuit Builder solves real Kirchhoff's-law equations, Projectile Motion &amp; Pendulum Lab integrate real equations of motion.</footer>
+
+<script src="js/circuit.js"></script>
+<script src="js/projectile.js"></script>
+<script src="js/pendulum.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
