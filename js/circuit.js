@@ -115,6 +115,7 @@ class CircuitSim {
       if (!this.dragStart) {
         this.hoverPoint = this.snapToGrid(pos.x, pos.y);
         this.hoverElement = this.dragStart ? null : this._nearestElement(pos);
+        this.canvas.style.cursor = (this.hoverElement && this.hoverElement.type === 'switch') ? 'pointer' : 'crosshair';
       }
     });
 
@@ -124,28 +125,38 @@ class CircuitSim {
         const p = this.snapToGrid(pos.x, pos.y);
         if (p && !this.samePoint(this.dragStart, p)) {
           this._placeElement(this.tool, this.dragStart, p);
+          this._justPlaced = true; // suppress the click that follows this drag
         }
         this.dragStart = null;
       }
     });
 
     this.canvas.addEventListener('click', (e) => {
-      if (this.tool !== 'select' && this.tool !== 'delete') return;
+      if (this._justPlaced) { this._justPlaced = false; return; }
       const pos = this._canvasPos(e);
       const el = this._nearestElement(pos);
-      if (!el) { this.selected = null; this._updateInspector(); return; }
+
       if (this.tool === 'delete') {
-        this.elements = this.elements.filter(x => x.id !== el.id);
-        if (this.selected && this.selected.id === el.id) this.selected = null;
-        this._solve();
-      } else {
-        if (el.type === 'switch') {
-          el.closed = !el.closed;
+        if (el) {
+          this.elements = this.elements.filter(x => x.id !== el.id);
+          if (this.selected && this.selected.id === el.id) this.selected = null;
           this._solve();
         }
-        this.selected = el;
-        this._updateInspector();
+        return;
       }
+
+      // a switch is always clickable to flip it on/off, whatever tool is active
+      if (el && el.type === 'switch') {
+        el.closed = !el.closed;
+        this._solve();
+        if (this.tool === 'select') { this.selected = el; this._updateInspector(); }
+        return;
+      }
+
+      if (this.tool !== 'select') return;
+      if (!el) { this.selected = null; this._updateInspector(); return; }
+      this.selected = el;
+      this._updateInspector();
     });
   }
 
@@ -576,6 +587,25 @@ class CircuitSim {
     if (el.closed) ctx.lineTo(p2.x, p2.y);
     else ctx.lineTo(p1.x + ux * len * 0.3 + nx * 14, p1.y + uy * len * 0.3 + ny * 14);
     ctx.stroke();
+
+    // a persistent ON/OFF button badge, offset to the side so it never covers the lever
+    const mid = { x: (a.x + b.x) / 2 + nx * 16, y: (a.y + b.y) / 2 + ny * 16 };
+    const w = 30, h = 15;
+    ctx.save();
+    ctx.translate(mid.x, mid.y);
+    ctx.fillStyle = el.closed ? 'rgba(34,211,170,0.18)' : 'rgba(255,107,107,0.18)';
+    ctx.strokeStyle = el.closed ? '#22d3aa' : '#ff6b6b';
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, -w / 2, -h / 2, w, h, 7);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = el.closed ? '#22d3aa' : '#ff6b6b';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(el.closed ? 'ON' : 'OFF', 0, 0.5);
+    ctx.restore();
+    ctx.textAlign = 'start';
+    ctx.textBaseline = 'alphabetic';
   }
 
   _drawCurrentDots(a, b, current) {
@@ -596,6 +626,16 @@ class CircuitSim {
       ctx.fill();
     }
   }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 function getCss(varName) {

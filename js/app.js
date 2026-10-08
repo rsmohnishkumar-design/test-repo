@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (name === 'circuit') sims.circuit = new CircuitSim();
       if (name === 'projectile') sims.projectile = new ProjectileSim();
       if (name === 'pendulum') sims.pendulum = new PendulumSim();
+      if (name === 'incline') sims.incline = new InclineSim();
+      if (name === 'spring') sims.spring = new SpringSim();
     }
   }
 

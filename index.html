@@ -14,6 +14,8 @@
     <button class="tab-btn active" data-tab="circuit">Circuit Builder</button>
     <button class="tab-btn" data-tab="projectile">Projectile Motion</button>
     <button class="tab-btn" data-tab="pendulum">Pendulum Lab</button>
+    <button class="tab-btn" data-tab="incline">Incline Plane</button>
+    <button class="tab-btn" data-tab="spring">Spring Lab</button>
   </nav>
 </header>
 
@@ -138,13 +140,94 @@
     </div>
   </section>
 
+  <!-- ===================== INCLINE PLANE (NEWTON'S LAWS) ===================== -->
+  <section id="incline" class="panel">
+    <div class="lab-layout">
+      <div class="controls" id="incline-controls">
+        <label>Mass: <span id="inc-mass-val">5</span> kg
+          <input id="inc-mass" type="range" min="1" max="20" step="1" value="5">
+        </label>
+        <label>Incline angle: <span id="inc-angle-val">30</span>°
+          <input id="inc-angle" type="range" min="0" max="80" step="1" value="30">
+        </label>
+        <label>Friction coefficient (μ): <span id="inc-mu-val">0.3</span>
+          <input id="inc-mu" type="range" min="0" max="1" step="0.02" value="0.3">
+        </label>
+        <label>Gravity:
+          <select id="inc-gravity">
+            <option value="9.81" selected>Earth (9.81 m/s²)</option>
+            <option value="1.62">Moon (1.62 m/s²)</option>
+            <option value="3.71">Mars (3.71 m/s²)</option>
+          </select>
+        </label>
+        <div class="btn-row">
+          <button id="inc-release" class="primary-btn">▶ Release</button>
+          <button id="inc-reset" class="tool-btn">Reset</button>
+        </div>
+      </div>
+      <div class="lab-main">
+        <canvas id="incline-canvas" width="760" height="360"></canvas>
+        <p class="hint">Red = gravity (mg), blue = normal force (N), yellow = friction (f). Acceleration down the
+        slope is a = g(sinθ − μcosθ), independent of mass.</p>
+      </div>
+      <aside class="side-panel">
+        <h3>Live Data</h3>
+        <div id="inc-live" class="readouts-box"></div>
+        <h3>Forces</h3>
+        <div id="inc-readouts" class="readouts-box"></div>
+        <h3>Theory</h3>
+        <div class="theory-box">
+          <p>Normal: N = mg cos θ</p>
+          <p>Gravity along ramp: mg sin θ</p>
+          <p>It slides only if mg sin θ &gt; μN, i.e. tan θ &gt; μ.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== SPRING-MASS (SHM) LAB ===================== -->
+  <section id="spring" class="panel">
+    <div class="lab-layout">
+      <div class="controls" id="spring-controls">
+        <label>Spring constant k: <span id="spr-k-val">20</span> N/m
+          <input id="spr-k" type="range" min="1" max="100" step="1" value="20">
+        </label>
+        <label>Mass: <span id="spr-mass-val">2</span> kg
+          <input id="spr-mass" type="range" min="0.2" max="10" step="0.1" value="2">
+        </label>
+        <label>Initial displacement: <span id="spr-amp-val">1.5</span> m
+          <input id="spr-amp" type="range" min="-2.5" max="2.5" step="0.1" value="1.5">
+        </label>
+        <label>Damping (c): <span id="spr-damping-val">0.2</span>
+          <input id="spr-damping" type="range" min="0" max="5" step="0.1" value="0.2">
+        </label>
+        <div class="btn-row">
+          <button id="spr-start" class="primary-btn">▶ Start</button>
+          <button id="spr-pause" class="tool-btn">⏸ Pause</button>
+          <button id="spr-reset" class="tool-btn">Reset</button>
+        </div>
+      </div>
+      <div class="lab-main">
+        <canvas id="spring-canvas" width="760" height="300"></canvas>
+      </div>
+      <aside class="side-panel">
+        <h3>Live Data</h3>
+        <div id="spr-live" class="readouts-box"></div>
+        <h3>Theory</h3>
+        <div id="spr-theory" class="theory-box"></div>
+      </aside>
+    </div>
+  </section>
+
 </main>
 
-<footer class="foot">Built for learning: Circuit Builder solves real Kirchhoff's-law equations, Projectile Motion &amp; Pendulum Lab integrate real equations of motion.</footer>
+<footer class="foot">Built for learning: every lab solves or integrates the real physics — Kirchhoff's laws, Newton's second law, and equations of motion — not a canned animation.</footer>
 
 <script src="js/circuit.js"></script>
 <script src="js/projectile.js"></script>
 <script src="js/pendulum.js"></script>
+<script src="js/incline.js"></script>
+<script src="js/spring.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
